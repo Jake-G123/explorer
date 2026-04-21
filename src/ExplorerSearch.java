@@ -29,36 +29,28 @@ public class ExplorerSearch {
      * @return the number of spaces the explorer can reach
      */
     public static int reachableArea(int[][] island) {
-        // Implement your method here!
-        // Please also make more test cases
-        // I STRONGLY RECOMMEND testing some helpers you might make too
         int[] startLocation = location(island);
         boolean[][] visited = new boolean[island.length][island[0].length];
-        canReach(startLocation, island, visited);
-
-        int reachable = 0;
-        for (int r = 0; r < island.length; r++) {
-            for (int c = 0; c < island[0].length; c++) {
-                if (visited[r][c] == true) reachable++;
-            }
-        }
-        return -1;
+        return canReach(startLocation, island, visited);
     }
 
-    private static boolean canReach(int[] location, int[][] island, boolean[][] visited) {
-        int curR = currentLoc[0];
-        int curC = currentLoc[1];
+    private static int canReach(int[] location, int[][] island, boolean[][] visited) {
+        int curR = location[0];
+        int curC = location[1];
 
-        if (island[curR][curC] == 1) return true;
-        if (visited[curR][curC]) return false;
+        if (curR < 0 || curC < 0 || curR >= island.length || curC >= island[0].length) return 0;
+        if (island[curR][curC] == 2 || island[curR][curC] == 3) return 0;
+        if (visited[curR][curC]) return 0;
 
         visited[curR][curC] = true;
 
-        for(int[] move : possibleMoves(island, currentLoc)) {
-            if (canReach(move, island, visited)) return true;
+        int reachableCount = 1;
+
+        for(int[] move : possibleMoves(island, location)) {
+            reachableCount += canReach(move, island, visited);
         }
 
-        return false;
+        return reachableCount;
     }
 
     public static int[] location(int[][] island) {
@@ -67,7 +59,7 @@ public class ExplorerSearch {
                 if (island[r][c] == 0) return new int[]{r, c};
             }
         }
-        throw new IllegalArgumentException("No explorer present")
+        throw new IllegalArgumentException("No explorer present");
     }
 
     public static List<int[]> possibleMoves(int[][] island, int[] location) {
@@ -92,17 +84,17 @@ public class ExplorerSearch {
         // LEFT
         newR = curR;
         newC = curC - 1;
-        if(newC >= island.length && island[newR][newC] != 2 && island[newR][newC] != 3) {
+        if(newC >= 0 && island[newR][newC] != 2 && island[newR][newC] != 3) {
             validLocs.add(new int[]{newR, newC});
         }
 
         // RIGHT
         newR = curR;
         newC = curC + 1;
-        if(newC < island.length && island[newR][newC] != 2 && island[newR][newC] != 3) {
+        if(newC < island[0].length && island[newR][newC] != 2 && island[newR][newC] != 3) {
             validLocs.add(new int[]{newR, newC});
         }
-        return valicLocs;
+        return validLocs;
     }
 
 }
